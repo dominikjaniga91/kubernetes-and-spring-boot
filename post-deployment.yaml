@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: post-app
+  namespace: k8s-program
+  labels:
+    app: post
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: post
+  template:
+    metadata:
+      labels:
+        app: post
+    spec:
+      containers:
+      - name: post-app
+        image: djanigaepam/post-service:latest
+        ports:
+        - containerPort: 8082
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: jdbc:postgresql://post-database:5432/posts
+          - name: SPRING_DATASOURCE_USERNAME
+            value: postuser
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: password
+          - name: USER_SERVICE_URL
+            value: http://user-service:81
+          - name: SPRING_JPA_HIBERNATE_DDLAUTO
+            value: create-drop

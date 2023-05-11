@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: k8s-program
+  name: user-database
+  labels:
+    database: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      database: user
+  template:
+    metadata:
+      labels:
+        database: user
+    spec:
+      containers:
+      - name: user-database
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_USER
+            value: testuser
+          - name: POSTGRES_PASSWORD
+            value: password
+          - name: POSTGRES_DB
+            value: users

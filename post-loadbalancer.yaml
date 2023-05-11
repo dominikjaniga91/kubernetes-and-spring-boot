@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: post-service-lb
+  namespace: k8s-program
+  labels: 
+    app: post
+spec:
+  type: LoadBalancer
+  selector:
+    app: post
+  ports:
+    - port: 8282
+      targetPort: 8082

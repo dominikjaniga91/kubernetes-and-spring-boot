@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: k8s-program
+  name: user-database
+  labels:
+    database: user
+spec:
+  type: NodePort
+  ports:
+    - port: 5432
+  selector:
+    database: user
