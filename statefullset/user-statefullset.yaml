@@ -1,25 +1,24 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: user-app
+  name: user-set
   namespace: k8s-program
-  labels:
-    app: user
 spec:
-  replicas: 2
   selector:
     matchLabels:
-      app: user
+      app: user-set
+  serviceName: user-set
+  replicas: 2
   template:
     metadata:
       labels:
-        app: user
+        app: user-set
     spec:
       containers:
-      - name: user-app
+      - name: user-set-app
         image: djanigaepam/user-service:latest
         ports:
-        - containerPort: 8081
+          - containerPort: 8083
         env:
           - name: SPRING_DATASOURCE_URL
             value: jdbc:postgresql://user-database:5432/users
@@ -29,3 +28,15 @@ spec:
             value: password
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
             value: create-drop
+        volumeMounts:
+          - mountPath: "/tmp"
+            name: user-set-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: user-set-pvc
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "hostpath"
+        resources:
+          requests:
+            storage: 1Gi

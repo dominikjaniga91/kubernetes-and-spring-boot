@@ -31,3 +31,10 @@ spec:
             value: http://user-service:81
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
             value: create-drop
+        volumeMounts:
+        - mountPath: "/tmp"
+          name: post-pv-storage
+      volumes:
+      - name: post-pv-storage
+        persistentVolumeClaim:
+          claimName: post-pvc
