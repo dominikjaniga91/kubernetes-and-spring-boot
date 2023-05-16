@@ -55,13 +55,18 @@ git clone https://github.com/dominikjaniga91/kubernetes-and-spring-boot.git
 cd kubernetes-and-spring-boot
 ```
 
-Create user app and database:
+Create namespace:
+```
+kubectl apply -f namespace.yaml
+```
+
+Create user app, service, volumes and database:
 ```
 cd user
 kubectl apply -f .
 ```
 
-Create post app and database:
+Create post app, service, volumes and database:
 ```
 cd post
 kubectl apply -f .
