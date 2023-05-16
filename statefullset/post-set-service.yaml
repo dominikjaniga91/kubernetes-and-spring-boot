@@ -3,13 +3,12 @@ kind: Service
 metadata:
   name: post-set-service
   namespace: k8s-program
-  labels: 
-    app: post-set
+  labels:
+    database: post-set
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
-    app: post-set
+    database: post-set
   ports:
     - port: 84
       targetPort: 8084
-      nodePort: 30010

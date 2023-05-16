@@ -3,14 +3,12 @@ kind: Service
 metadata:
   name: user-set-service
   namespace: k8s-program
-  labels: 
-    app: user-set
+  labels:
+    database: user-set
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
-    app: user-set
+    database: user-set
   ports:
     - port: 83
       targetPort: 8083
-      nodePort: 30009
-

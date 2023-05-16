@@ -1,35 +1,33 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: post-set
+  name: post-set-database
   namespace: k8s-program
+  labels:
+    database: post-set
 spec:
   selector:
     matchLabels:
-      app: post-set
-  serviceName: post-set
-  replicas: 2
+      database: post-set
+  serviceName: post-set-database
+  replicas: 1
   template:
     metadata:
       labels:
-        app: post-set
+        database: post-set
     spec:
       containers:
-      - name: post-set-app
-        image: djanigaepam/post-service:latest
+      - name: post-set-database
+        image: postgres:latest
         ports:
-          - containerPort: 8084
+          - containerPort: 5432
         env:
-          - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://user-database:5432/users
-          - name: SPRING_DATASOURCE_USERNAME
-            value: testuser
-          - name: SPRING_DATASOURCE_PASSWORD
+          - name: POSTGRES_USER
+            value: postuser
+          - name: POSTGRES_PASSWORD
             value: password
-          - name: USER_SERVICE_URL
-            value: http://user-set-service:83
-          - name: SPRING_JPA_HIBERNATE_DDLAUTO
-            value: create-drop
+          - name: POSTGRES_DB
+            value: posts
         volumeMounts:
           - mountPath: "/tmp"
             name: post-set-pvc

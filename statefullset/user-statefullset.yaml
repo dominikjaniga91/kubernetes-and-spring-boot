@@ -1,33 +1,33 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: user-set
+  name: user-set-database
   namespace: k8s-program
+  labels:
+    database: user-set
 spec:
   selector:
     matchLabels:
-      app: user-set
+      database: user-set
   serviceName: user-set
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
-        app: user-set
+        database: user-set
     spec:
       containers:
-      - name: user-set-app
-        image: djanigaepam/user-service:latest
+      - name: user-set-database
+        image: postgres:latest
         ports:
-          - containerPort: 8083
+          - containerPort: 5432
         env:
-          - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://user-database:5432/users
-          - name: SPRING_DATASOURCE_USERNAME
+          - name: POSTGRES_USER
             value: testuser
-          - name: SPRING_DATASOURCE_PASSWORD
+          - name: POSTGRES_PASSWORD
             value: password
-          - name: SPRING_JPA_HIBERNATE_DDLAUTO
-            value: create-drop
+          - name: POSTGRES_DB
+            value: user
         volumeMounts:
           - mountPath: "/tmp"
             name: user-set-pvc
