@@ -15,12 +15,12 @@ This is a continuation of previous task, the applcation images used in yaml file
 ## What to do
 In this module you will create infrastructure for your k8s cluster and deploy your microservices applications there.
 
-## Task 1 Enable k8s
+## Task 1: Enable k8s
 To use Kubernetes go to Docker Desktop settings, choose Kubernetes and click checkbox 'Enable Kubernetes'. You will need to wait for the installation and restart docker.
 To verify installation run the next command: kubectl version.
 It is recommended to install Kubernetes Lens to relieve resources management.
 
-## Task 2 Deploy containers in k8s
+## Task 2: Deploy containers in k8s
 In this subtask you need to create manifest .yml files with configuration for deployment. These files should contain the next objects:
 
 Namespace (f.e. k8s-program). All other objects will use this namespace;
@@ -33,7 +33,7 @@ To deploy, run kubectl apply ./ in folders where yml files are stored.
 To view all objects run kubectl get all -n=<your_namespace>. 
 Along with services and deployments, this command outputs pods and replica-sets. Find out why.
 
-## Task 3 Persistent volumes
+## Task 3: Persistent volumes
 In this subtask you will make your app pods use local storage. This will ensure that no data is lost during pod deploy/redeploy.
 
 Add PersistentVolume object with "manual" storage class for the User service (create separate manifest file). Configure hostPath field so PersistentVolume create directory on the node.
@@ -41,7 +41,7 @@ Add PersistenceVolumeClaim objects to your manifest and reference them from User
 Test PersistentVolume: create any file inside the container in the volume directory, scale down deployment or delete pod, let replicaset automatically create pod, ensure that file still exists.
 
 
-## Task 4 Stateful Sets
+## Task 4: Stateful Sets
 
 Use StatefulSet object (not Deployment) to create databases.
 Configure default storage class "hostpath" for volume claim templates, so allowing k8s to provision storage with default provisioner (PersistentVolume will be created automatically).
