@@ -6,7 +6,6 @@ metadata:
   labels:
     database: post
 spec:
-  type: NodePort
   ports:
     - port: 5432
   selector:
