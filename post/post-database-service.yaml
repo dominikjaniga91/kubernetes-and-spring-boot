@@ -6,6 +6,7 @@ metadata:
   labels:
     database: post
 spec:
+  type: ClusterIP
   ports:
     - port: 5432
   selector:
