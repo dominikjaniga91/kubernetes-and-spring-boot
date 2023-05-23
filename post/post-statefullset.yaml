@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: post-set-database
+  name: post-database
   namespace: k8s-program
   labels:
     database: post-set
@@ -23,11 +23,20 @@ spec:
           - containerPort: 5432
         env:
           - name: POSTGRES_USER
-            value: postuser
+            valueFrom:
+              secretKeyRef:
+                name: post-secret
+                key: username
           - name: POSTGRES_PASSWORD
-            value: password
+            valueFrom:
+              secretKeyRef:
+                name: post-secret
+                key: password
           - name: POSTGRES_DB
-            value: posts
+            valueFrom:
+              configMapKeyRef:
+                name: post-config
+                key: database
         volumeMounts:
           - mountPath: "/tmp"
             name: post-set-pvc

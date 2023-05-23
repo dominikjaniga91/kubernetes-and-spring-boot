@@ -22,13 +22,25 @@ spec:
         - containerPort: 8081
         env:
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://user-database:5432/users
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: database_url
           - name: SPRING_DATASOURCE_USERNAME
-            value: testuser
+            valueFrom:
+              secretKeyRef:
+                name: user-secret
+                key: username
           - name: SPRING_DATASOURCE_PASSWORD
-            value: password
+            valueFrom:
+              secretKeyRef:
+                name: user-secret
+                key: password
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
-            value: create-drop
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: hibernate_create
         volumeMounts:
           - mountPath: "/tmp"
             name: user-pv-storage

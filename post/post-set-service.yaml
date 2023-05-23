@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: post-set-service
+  name: post-database
   namespace: k8s-program
   labels:
     database: post-set
@@ -10,5 +10,4 @@ spec:
   selector:
     database: post-set
   ports:
-    - port: 84
-      targetPort: 8084
+    - port: 5432
