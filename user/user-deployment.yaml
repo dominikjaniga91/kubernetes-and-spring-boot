@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: user-app
-        image: djanigaepam/user-service:latest
+        image: djanigaepam/user-service:2.0
         ports:
         - containerPort: 8081
         env:
@@ -44,6 +44,25 @@ spec:
         volumeMounts:
           - mountPath: "/tmp"
             name: user-pv-storage
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 3
+          failureThreshold: 30
+          periodSeconds: 10
       volumes:
         - name: user-pv-storage
           persistentVolumeClaim:

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: post-app
-        image: djanigaepam/post-service:latest
+        image: djanigaepam/post-service:2.0
         ports:
         - containerPort: 8082
         env:
@@ -46,6 +46,25 @@ spec:
               configMapKeyRef:
                 name: post-config
                 key: hibernate_create
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8082
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 3
+          failureThreshold: 30
+          periodSeconds: 10
         volumeMounts:
         - mountPath: "/tmp"
           name: post-pv-storage

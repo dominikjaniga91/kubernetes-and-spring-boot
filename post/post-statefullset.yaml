@@ -40,6 +40,21 @@ spec:
         volumeMounts:
           - mountPath: "/tmp"
             name: post-set-pvc
+        readinessProbe:
+          exec:
+            command: [ "psql", "-w", "-U", "postuser", "-d", "posts", "-c", "SELECT 1" ]
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
+        livenessProbe:
+          exec:
+            command: [ "psql", "-w", "-U", "postuser", "-d", "posts", "-c", "SELECT 1" ]
+          initialDelaySeconds: 45
+          timeoutSeconds: 10
+        startupProbe:
+          exec:
+            command: [ "psql", "-w", "-U", "postuser", "-d", "posts", "-c", "SELECT 1" ]
+          initialDelaySeconds: 45
+          timeoutSeconds: 10
   volumeClaimTemplates:
     - metadata:
         name: post-set-pvc
