@@ -13,4 +13,4 @@ data:
       username VARCHAR(50) NOT NULL,
       amount_of_posts INTEGER NOT NULL
     );
-    INSERT INTO users (id, username, amount_of_posts) VALUES (1, 'Dominik', 0);
+    INSERT INTO users (username, amount_of_posts) VALUES ('Dominik', 0);

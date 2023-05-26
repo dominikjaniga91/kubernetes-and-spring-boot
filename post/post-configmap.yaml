@@ -15,4 +15,4 @@ data:
       text      VARCHAR(255)   NOT NULL,
       posted_at TIMESTAMP      NOT NULL
     );
-    INSERT INTO posts (id, author_id, text, posted_at) VALUES (1, 1, 'Initial post', '2022-05-26 11:00:00');
+    INSERT INTO posts (author_id, text, posted_at) VALUES (1, 'Initial post', '2022-05-26');
