@@ -8,10 +8,9 @@ data:
   database_url: jdbc:postgresql://user-database:5432/users
   hibernate_create: update
   init.sql: |
-    CREATE DATABASE IF NOT EXISTS users;
-    USE users;
     CREATE TABLE users (
       id serial PRIMARY KEY,
       username VARCHAR(50) NOT NULL,
       amount_of_posts INTEGER NOT NULL
     );
+    INSERT INTO users (id, username, amount_of_posts) VALUES (1, 'Dominik', 0);

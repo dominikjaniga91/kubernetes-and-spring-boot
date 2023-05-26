@@ -40,6 +40,8 @@ spec:
         volumeMounts:
           - mountPath: "/tmp"
             name: user-set-pvc
+          - mountPath: "/docker-entrypoint-initdb.d"
+            name: init-script
         readinessProbe:
           exec:
             command: [ "psql", "-w", "-U", "testuser", "-d", "users", "-c", "SELECT 1" ]
@@ -55,6 +57,10 @@ spec:
             command: [ "psql", "-w", "-U", "testuser", "-d", "users", "-c", "SELECT 1" ]
           initialDelaySeconds: 10
           timeoutSeconds: 10
+      volumes:
+        - name: init-script
+          configMap:
+            name: user-config
   volumeClaimTemplates:
     - metadata:
         name: user-set-pvc
