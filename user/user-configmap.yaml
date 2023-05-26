@@ -6,7 +6,7 @@ metadata:
 data:
   database: users
   database_url: jdbc:postgresql://user-database:5432/users
-  hibernate_create: create-drop
+  hibernate_create: update
   init.sql: |
     CREATE DATABASE IF NOT EXISTS users;
     USE users;
