@@ -46,6 +46,11 @@ spec:
               configMapKeyRef:
                 name: post-config
                 key: user_service_url
+          - name: SPRING_JPA_SHOWSQL
+            valueFrom:
+              configMapKeyRef:
+                name: post-config
+                key: sql_show
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
             valueFrom:
               configMapKeyRef:

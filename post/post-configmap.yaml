@@ -8,6 +8,7 @@ data:
   database_url: jdbc:postgresql://post-database:5432/posts
   user_service_url: http://user-service:81
   hibernate_create: update
+  sql_show: "true"
   init.sql: |    
     CREATE TABLE posts (
       id        serial PRIMARY KEY,

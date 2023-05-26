@@ -46,6 +46,11 @@ spec:
               configMapKeyRef:
                 name: user-config
                 key: hibernate_create
+          - name: SPRING_JPA_SHOWSQL
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: sql_show
         volumeMounts:
           - mountPath: "/tmp"
             name: user-pv-storage
