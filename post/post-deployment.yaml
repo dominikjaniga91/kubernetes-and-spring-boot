@@ -7,6 +7,11 @@ metadata:
     app: post
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: post
@@ -17,20 +22,59 @@ spec:
     spec:
       containers:
       - name: post-app
-        image: djanigaepam/post-service:latest
+        image: djanigaepam/post-service:2.0
         ports:
         - containerPort: 8082
         env:
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://post-database:5432/posts
+            valueFrom:
+              configMapKeyRef:
+                name: post-config
+                key: database_url
           - name: SPRING_DATASOURCE_USERNAME
-            value: postuser
+            valueFrom:
+              secretKeyRef:
+                name: post-secret
+                key: username
           - name: SPRING_DATASOURCE_PASSWORD
-            value: password
+            valueFrom:
+              secretKeyRef:
+                name: post-secret
+                key: password
           - name: USER_SERVICE_URL
-            value: http://user-service:81
+            valueFrom:
+              configMapKeyRef:
+                name: post-config
+                key: user_service_url
+          - name: SPRING_JPA_SHOWSQL
+            valueFrom:
+              configMapKeyRef:
+                name: post-config
+                key: sql_show
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
-            value: create-drop
+            valueFrom:
+              configMapKeyRef:
+                name: post-config
+                key: hibernate_create
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8082
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 3
+          failureThreshold: 30
+          periodSeconds: 10
         volumeMounts:
         - mountPath: "/tmp"
           name: post-pv-storage

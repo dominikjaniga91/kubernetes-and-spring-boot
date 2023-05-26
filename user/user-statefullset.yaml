@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: user-database
+  namespace: k8s-program
+  labels:
+    database: user-set
+spec:
+  selector:
+    matchLabels:
+      database: user-set
+  serviceName: user-set
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        database: user-set
+    spec:
+      containers:
+      - name: user-set-database
+        image: postgres:latest
+        ports:
+          - containerPort: 5432
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: user-secret
+                key: username
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: user-secret
+                key: password
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: database
+        volumeMounts:
+          - mountPath: "/tmp"
+            name: user-set-pvc
+          - mountPath: "/docker-entrypoint-initdb.d"
+            name: init-script
+        readinessProbe:
+          exec:
+            command: [ "psql", "-w", "-U", "testuser", "-d", "users", "-c", "SELECT 1" ]
+          initialDelaySeconds: 15
+          timeoutSeconds: 10
+        livenessProbe:
+          exec:
+            command: [ "psql", "-w", "-U", "testuser", "-d", "users", "-c", "SELECT 1" ]
+          initialDelaySeconds: 45
+          timeoutSeconds: 10
+        startupProbe:
+          exec:
+            command: [ "psql", "-w", "-U", "testuser", "-d", "users", "-c", "SELECT 1" ]
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+      volumes:
+        - name: init-script
+          configMap:
+            name: user-config
+  volumeClaimTemplates:
+    - metadata:
+        name: user-set-pvc
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "hostpath"
+        resources:
+          requests:
+            storage: 1Gi

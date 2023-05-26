@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: k8s-program
+  name: user-config
+data:
+  database: users
+  database_url: jdbc:postgresql://user-database:5432/users
+  hibernate_create: update
+  sql_show: "true"
+  init.sql: |
+    CREATE TABLE users (
+      id serial PRIMARY KEY,
+      username VARCHAR(50) NOT NULL,
+      amount_of_posts INTEGER NOT NULL
+    );
+    INSERT INTO users (username, amount_of_posts) VALUES ('Dominik', 0);

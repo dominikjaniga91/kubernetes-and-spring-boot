@@ -7,6 +7,11 @@ metadata:
     app: user
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: user
@@ -17,21 +22,57 @@ spec:
     spec:
       containers:
       - name: user-app
-        image: djanigaepam/user-service:latest
+        image: djanigaepam/user-service:2.0
         ports:
         - containerPort: 8081
         env:
           - name: SPRING_DATASOURCE_URL
-            value: jdbc:postgresql://user-database:5432/users
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: database_url
           - name: SPRING_DATASOURCE_USERNAME
-            value: testuser
+            valueFrom:
+              secretKeyRef:
+                name: user-secret
+                key: username
           - name: SPRING_DATASOURCE_PASSWORD
-            value: password
+            valueFrom:
+              secretKeyRef:
+                name: user-secret
+                key: password
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
-            value: create-drop
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: hibernate_create
+          - name: SPRING_JPA_SHOWSQL
+            valueFrom:
+              configMapKeyRef:
+                name: user-config
+                key: sql_show
         volumeMounts:
           - mountPath: "/tmp"
             name: user-pv-storage
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 3
+          failureThreshold: 30
+          periodSeconds: 10
       volumes:
         - name: user-pv-storage
           persistentVolumeClaim:
