@@ -31,6 +31,9 @@ In this module you will manage secrets and properties for your k8s objects and s
 2. Add startup, liveness and readiness probes for your Deployment objects at k8s manifest.
 3. Add startup, liveness and readiness probes for your StatefulSet objects at k8s manifest
 
+Post and user services have been updated with spring-boot-actuator: https://github.com/dominikjaniga91/spring-boot-docker/pull/1
+
+
 ## Task 3: Deployment strategies
 
 In this module you will add a field to one of your services, and perform Rolling-update deployment.
@@ -75,6 +78,8 @@ kubectl delete all --all -n=k8s-program
 ```
 
 ## Solution for task 3 and 4
+
+Post service has been updated with "Topic" field: https://github.com/dominikjaniga91/spring-boot-docker/pull/1
 
 1. Change the version of image in post-deployment.yaml to 2.1
 2. Recreate the deployment
