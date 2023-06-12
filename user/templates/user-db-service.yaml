@@ -10,4 +10,4 @@ spec:
   selector:
     database: {{ .Values.name }}-set
   ports:
-    - port: 5432
+    - port: {{ .Values.database.port }}

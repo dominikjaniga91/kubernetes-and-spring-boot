@@ -3,4 +3,19 @@ replicas:
   database: 1
 namespace: k8s-program
 name: user
-database: users
+database:
+  image:
+    name: postgres
+    version: latest
+  name: users
+  port: 5432
+container:
+  port: 8081
+  image:
+    name: djanigaepam/user-service
+    version: 2.0
+probe:
+  default:
+    timeout: 10
+    delay: 10
+    period: 10

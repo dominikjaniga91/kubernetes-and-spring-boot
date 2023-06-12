@@ -4,8 +4,8 @@ metadata:
   namespace: {{ .Values.namespace }}
   name: {{ .Values.name }}-config
 data:
-  database: {{ .Values.database }}
-  database_url: jdbc:postgresql://{{ .Values.name }}-database:5432/{{ .Values.database }}
+  database: {{ .Values.database.name }}
+  database_url: jdbc:postgresql://{{ .Values.name }}-database:{{ .Values.database.port }}/{{ .Values.database.name }}
   user_service_url: http://user-service:81
   hibernate_create: update
   sql_show: "true"

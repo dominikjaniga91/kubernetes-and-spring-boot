@@ -2,54 +2,39 @@
 
 This repository contains of kubernetes yaml files. 
 
-This is a continuation of previous task (branch kubernetes). 
+This is a continuation of previous task (branch _kubernetes_ and _module-3_). 
 The application images used in yaml files are images of user and post app from this repo https://github.com/dominikjaniga91/spring-boot-docker.
 
 ## Table of content
 * [What to do](#what-to-do)
-* [Task 1: Secrets and config maps](#task-1-Secrets-and-config-maps)
-* [Task 2: Liveness and Readiness probes](#task-2-liveness-and-readiness-probes)
-* [Task 3: Deployment strategies](#task-3-deployment-strategies)
-* [Task 4: Deployment history](#task-4-deployment-history)
-* [Usage](#usage)
-* [Solution for task 3 and 4](#solution-for-task-3-and-4)
+* [Task 1: Helm charts](#task-1-helm-charts)
+* [Task 2: Helm chart helpers](#task-2-helm-chart-helpers)
+* [Task](#usage)
 
 ## What to do
 
-In this module you will manage secrets and properties for your k8s objects and study deployment strategies.
+In this module you will learn how to attach persistent storages to your applications. Also, you will understand how helm charts work.
 
-## Task 1: Secrets and config maps
+## Task 1: Helm charts
 
-1. Add Secrets object to your k8s manifest to store database username and password.
-2. Add config maps to store environment variables for application deployments.
-3. Add sql scripts to init databases (create tables) to config maps.
-4. Change k8s Deployment and StatefulSet objects to load these secrets and config-maps.
+1. Install helm Official download link.
+2. Add helm chart to deploy your applications. Make replica-count and namespace a helm values.
+3. Add helm values file to store default values for helm variables.
+4. Run helm using helm install command to deploy applications with default helm variables. Make sure, your applications are up and running.
+5. Run helm once again, but this time set namespace and replica-count for helm intall to non-default values.
 
-## Task 2:Liveness and Readiness probes
+## Task 2: Helm chart helpers
 
-1. Add endpoints for health checks at your applications.
-2. Add startup, liveness and readiness probes for your Deployment objects at k8s manifest.
-3. Add startup, liveness and readiness probes for your StatefulSet objects at k8s manifest
-
-## Task 3: Deployment strategies
-
-In this module you will add a field to one of your services, and perform Rolling-update deployment.
-
-1. To Post service add a new field topic (:String). This is the topic for the post. You can specify it when creating a new post and when updating existing post. This field also should be returned at the responses for POST, PUT and GET operations.
-2. Build a new docker image of application with changes and push it to the Docker Hub (specify another version of container).
-3. Add Rolling-update deployment strategy to your deployments at manifest files and apply the  manifest, so the old versions of microservices are deployed and running.
-4. Set app version of app containers to the new one and apply manifest one more time. Make sure that new changes are deployed.
-
-## Task 4: Deployment history
-
-As you deployed a new version of your application, you can see the history of your deployments. Your task is to roll back to previous version of your deployment without changing your manifest files.
-Put in comments the solution of this task.
+1. Create helm _helpers.tpl file and define next labels there:
+   * current date : use helm generator for it's value
+   * version
+2. Make config-map use values as labels from helm _helpers.tpl file.
 
 ## Usage
 ```
 git clone https://github.com/dominikjaniga91/kubernetes-and-spring-boot.git
 cd kubernetes-and-spring-boot
-git switch module-3
+git switch helm
 ```
 
 Create namespace:
@@ -60,44 +45,38 @@ kubectl apply -f namespace.yaml
 Create user app, service, volumes and database:
 ```
 cd user
-kubectl apply -f .
+helm install user .
 ```
 
 Create post app, service, volumes and database:
 ```
 cd post
-kubectl apply -f .
+helm install post .
 ```
 
 Delete all:
 ```
-kubectl delete all --all -n=k8s-program
+helm delete user
+helm delete post
+```
+The above commands install resources in the default namespace, you can verify this by using:
+
+```
+helm list
+```
+However kubernetes reaource are still available in k8s-program namespace:
+```
+kubectl get all -n=k8s-program
+```
+Use the following commands to set specific values like namespace or replica count:
+```
+helm install user --namespace k8s-program --set replicas.app=3 --set replicas.database=1 .
+helm install post --namespace k8s-program --set replicas.app=3 --set replicas.database=1 .
 ```
 
-## Solution for task 3 and 4
+Verify the results:
 
-1. Change the version of image in post-deployment.yaml to 2.1
-2. Recreate the deployment
 ```
-kubectl apply -f post-deployment.yaml
-```
-3. Alternatively you can use the following command
-```
-kubectl set image deployments/post-app post-app=djanigaepam/post-service:2.1 -n=k8s-program
-```
-4. Validate deployment images
-``` 
-kubectl get deployments -o wide -n=k8s-program
-```
-5. Check deployment history
-```
-kubectl rollout history deploy post-app -n=k8s-program
-```
-6. Rollback to specific version
-```
-kubectl rollout undo deployment/post-app -n=k8s-program --to-revision=1
-```
-7. Validate images again
-```
-kubectl get deployments -o wide -n=k8s-program
+helm list --namespace k8s-program
+kubectl get all -n=k8s-program
 ```

@@ -22,9 +22,9 @@ spec:
     spec:
       containers:
       - name: {{ .Values.name }}-app
-        image: djanigaepam/user-service:{{ .Chart.AppVersion }}
+        image: {{ .Values.container.image.name }}:{{ .Values.container.image.version }}
         ports:
-        - containerPort: 8081
+        - containerPort: {{ .Values.container.port }}
         env:
           - name: SPRING_DATASOURCE_URL
             valueFrom:
@@ -57,22 +57,22 @@ spec:
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
-            port: 8081
-          initialDelaySeconds: 10
-          periodSeconds: 10
+            port: {{ .Values.container.port }}
+          initialDelaySeconds: {{ .Values.probe.default.delay }}
+          periodSeconds: {{ .Values.probe.default.period }}
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
-            port: 8081
-          initialDelaySeconds: 10
-          periodSeconds: 10
+            port: {{ .Values.container.port }}
+          initialDelaySeconds: {{ .Values.probe.default.delay }}
+          periodSeconds: {{ .Values.probe.default.period }}
         startupProbe:
           httpGet:
             path: /actuator/health
-            port: 8081
+            port: {{ .Values.container.port }}
           initialDelaySeconds: 3
           failureThreshold: 30
-          periodSeconds: 10
+          periodSeconds: {{ .Values.probe.default.period }}
       volumes:
         - name: {{ .Values.name }}-pv-storage
           persistentVolumeClaim:

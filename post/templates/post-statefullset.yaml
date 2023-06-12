@@ -18,9 +18,9 @@ spec:
     spec:
       containers:
       - name: {{ .Values.name }}-set-database
-        image: postgres:latest
+        image: {{ .Values.database.image.name }}:{{ .Values.database.image.version }}
         ports:
-          - containerPort: 5432
+          - containerPort: {{ .Values.database.port }}
         env:
           - name: POSTGRES_USER
             valueFrom:
@@ -46,17 +46,17 @@ spec:
           exec:
             command: [ "psql", "-w", "-U", "postuser", "-d", "posts", "-c", "SELECT 1" ]
           initialDelaySeconds: 15
-          timeoutSeconds: 10
+          timeoutSeconds: {{ .Values.probe.default.timeout }}
         livenessProbe:
           exec:
             command: [ "psql", "-w", "-U", "postuser", "-d", "posts", "-c", "SELECT 1" ]
           initialDelaySeconds: 45
-          timeoutSeconds: 10
+          timeoutSeconds: {{ .Values.probe.default.timeout }}
         startupProbe:
           exec:
             command: [ "psql", "-w", "-U", "postuser", "-d", "posts", "-c", "SELECT 1" ]
           initialDelaySeconds: 45
-          timeoutSeconds: 10
+          timeoutSeconds: {{ .Values.probe.default.timeout }}
       volumes:
         - name: init-script
           configMap:

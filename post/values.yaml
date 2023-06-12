@@ -3,4 +3,19 @@ replicas:
   database: 1
 namespace: k8s-program
 name: post
-database: posts
+database:
+  image:
+    name: postgres
+    version: latest
+  name: posts
+  port: 5432
+container:
+  port: 8082
+  image:
+    name: djanigaepam/post-service
+    version: 2.0
+probe:
+  default:
+    timeout: 10
+    delay: 10
+    period: 10

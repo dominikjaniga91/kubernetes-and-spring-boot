@@ -11,5 +11,5 @@ spec:
     {{ include "app.label" . }}
   ports:
     - port: 81
-      targetPort: 8081
+      targetPort: {{ .Values.container.port }}
       nodePort: 30007

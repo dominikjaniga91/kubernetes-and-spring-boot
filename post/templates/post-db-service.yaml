@@ -10,4 +10,4 @@ spec:
   selector:
     {{ include "database.label" . }}
   ports:
-    - port: 5432
+    - port: {{ .Values.database.port }}
