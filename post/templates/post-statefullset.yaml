@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: post-database
-  namespace: k8s-program
+  name: {{ .Values.name }}-database
+  namespace: {{ .Values.namespace }}
   labels:
-    database: post-set
+    {{ include "database.label" . }}
 spec:
   selector:
     matchLabels:
-      database: post-set
-  serviceName: post-set-database
-  replicas: 1
+      {{ include "database.label" . }}
+  serviceName: {{ .Values.name }}-set-database
+  replicas: {{ .Values.replicas.app }}
   template:
     metadata:
       labels:
-        database: post-set
+        {{ include "database.label" . }}
     spec:
       containers:
-      - name: post-set-database
+      - name: {{ .Values.name }}-set-database
         image: postgres:latest
         ports:
           - containerPort: 5432
@@ -25,21 +25,21 @@ spec:
           - name: POSTGRES_USER
             valueFrom:
               secretKeyRef:
-                name: post-secret
+                name: {{ .Values.name }}-secret
                 key: username
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: post-secret
+                name: {{ .Values.name }}-secret
                 key: password
           - name: POSTGRES_DB
             valueFrom:
               configMapKeyRef:
-                name: post-config
+                name: {{ .Values.name }}-config
                 key: database
         volumeMounts:
           - mountPath: "/tmp"
-            name: post-set-pvc
+            name: {{ .Values.name }}-set-pvc
           - mountPath: "/docker-entrypoint-initdb.d"
             name: init-script
         readinessProbe:
@@ -60,10 +60,10 @@ spec:
       volumes:
         - name: init-script
           configMap:
-            name: post-config
+            name: {{ .Values.name }}-config
   volumeClaimTemplates:
     - metadata:
-        name: post-set-pvc
+        name: {{ .Values.name }}-set-pvc
       spec:
         accessModes: [ "ReadWriteOnce" ]
         storageClassName: "hostpath"

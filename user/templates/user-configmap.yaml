@@ -1,10 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  namespace: k8s-program
-  name: user-config
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.name }}-config
 data:
-  database: users
+  current-date: {{ include "current-date" . }}
+  version: {{ include "version" . }}
+  database: user-database
   database_url: jdbc:postgresql://user-database:5432/users
   hibernate_create: update
   sql_show: "true"

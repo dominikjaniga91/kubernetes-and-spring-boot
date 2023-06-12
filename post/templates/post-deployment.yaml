@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: post-app
-  namespace: k8s-program
+  name: {{ .Values.name }}-app
+  namespace: {{ .Values.namespace }}
   labels:
-    app: post
+    {{ include "app.label" . }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicas.app }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -14,47 +14,47 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: post
+      {{ include "app.label" . }}
   template:
     metadata:
       labels:
-        app: post
+        {{ include "app.label" . }}
     spec:
       containers:
-      - name: post-app
-        image: djanigaepam/post-service:2.0
+      - name: {{ .Values.name }}-app
+        image: djanigaepam/post-service:{{ .Chart.AppVersion }}
         ports:
         - containerPort: 8082
         env:
           - name: SPRING_DATASOURCE_URL
             valueFrom:
               configMapKeyRef:
-                name: post-config
+                name: {{ .Values.name }}-config
                 key: database_url
           - name: SPRING_DATASOURCE_USERNAME
             valueFrom:
               secretKeyRef:
-                name: post-secret
+                name: {{ .Values.name }}-secret
                 key: username
           - name: SPRING_DATASOURCE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: post-secret
+                name: {{ .Values.name }}-secret
                 key: password
           - name: USER_SERVICE_URL
             valueFrom:
               configMapKeyRef:
-                name: post-config
+                name: {{ .Values.name }}-config
                 key: user_service_url
           - name: SPRING_JPA_SHOWSQL
             valueFrom:
               configMapKeyRef:
-                name: post-config
+                name: {{ .Values.name }}-config
                 key: sql_show
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
             valueFrom:
               configMapKeyRef:
-                name: post-config
+                name: {{ .Values.name }}-config
                 key: hibernate_create
         readinessProbe:
           httpGet:
@@ -77,8 +77,8 @@ spec:
           periodSeconds: 10
         volumeMounts:
         - mountPath: "/tmp"
-          name: post-pv-storage
+          name: {{ .Values.name }}-pv-storage
       volumes:
-      - name: post-pv-storage
+      - name: {{ .Values.name }}-pv-storage
         persistentVolumeClaim:
-          claimName: post-pvc
+          claimName: {{ .Values.name }}-pvc

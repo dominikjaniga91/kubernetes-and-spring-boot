@@ -1,0 +1,6 @@
+replicas:
+  app: 2
+  database: 1
+namespace: k8s-program
+name: user
+database: users

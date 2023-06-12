@@ -1,0 +1,8 @@
+apiVersion: v2
+name: post
+version: 1.0.0
+description: A helm chart for post service
+maintainers:
+  - name: Dominik Janiga
+    email: dominik_janiga@epam.com
+appVersion: "2.0"

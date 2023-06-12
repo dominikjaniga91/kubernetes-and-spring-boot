@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-app
-  namespace: k8s-program
+  name: {{ .Values.name }}-app
+  namespace: {{ .Values.namespace }}
   labels:
-    app: user
+    {{ include "app.label" . }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicas.app }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -14,46 +14,46 @@ spec:
       maxSurge: 1
   selector:
     matchLabels:
-      app: user
+      {{ include "app.label" . }}
   template:
     metadata:
       labels:
-        app: user
+        {{ include "app.label" . }}
     spec:
       containers:
-      - name: user-app
-        image: djanigaepam/user-service:2.0
+      - name: {{ .Values.name }}-app
+        image: djanigaepam/user-service:{{ .Chart.AppVersion }}
         ports:
         - containerPort: 8081
         env:
           - name: SPRING_DATASOURCE_URL
             valueFrom:
               configMapKeyRef:
-                name: user-config
+                name: {{ .Values.name }}-config
                 key: database_url
           - name: SPRING_DATASOURCE_USERNAME
             valueFrom:
               secretKeyRef:
-                name: user-secret
+                name: {{ .Values.name }}-secret
                 key: username
           - name: SPRING_DATASOURCE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: user-secret
+                name: {{ .Values.name }}-secret
                 key: password
           - name: SPRING_JPA_HIBERNATE_DDLAUTO
             valueFrom:
               configMapKeyRef:
-                name: user-config
+                name: {{ .Values.name }}-config
                 key: hibernate_create
           - name: SPRING_JPA_SHOWSQL
             valueFrom:
               configMapKeyRef:
-                name: user-config
+                name: {{ .Values.name }}-config
                 key: sql_show
         volumeMounts:
           - mountPath: "/tmp"
-            name: user-pv-storage
+            name: {{ .Values.name }}-pv-storage
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
@@ -74,6 +74,6 @@ spec:
           failureThreshold: 30
           periodSeconds: 10
       volumes:
-        - name: user-pv-storage
+        - name: {{ .Values.name }}-pv-storage
           persistentVolumeClaim:
-            claimName: user-pvc
+            claimName: {{ .Values.name }}-pvc

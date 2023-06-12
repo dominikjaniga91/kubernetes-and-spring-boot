@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: user-database
-  namespace: k8s-program
+  name: {{ .Values.name }}-database
+  namespace: {{ .Values.namespace }}
   labels:
-    database: user-set
+    database: {{ .Values.name }}-set
 spec:
   selector:
     matchLabels:
-      database: user-set
-  serviceName: user-set
-  replicas: 1
+      {{ include "database.label" . }}
+  serviceName: {{ .Values.name }}-set
+  replicas: {{ .Values.replicas.database }}
   template:
     metadata:
       labels:
-        database: user-set
+        {{ include "database.label" . }}
     spec:
       containers:
-      - name: user-set-database
+      - name: {{ .Values.name }}-set-database
         image: postgres:latest
         ports:
           - containerPort: 5432
@@ -25,21 +25,21 @@ spec:
           - name: POSTGRES_USER
             valueFrom:
               secretKeyRef:
-                name: user-secret
+                name: {{ .Values.name }}-secret
                 key: username
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: user-secret
+                name: {{ .Values.name }}-secret
                 key: password
           - name: POSTGRES_DB
             valueFrom:
               configMapKeyRef:
-                name: user-config
+                name: {{ .Values.name }}-config
                 key: database
         volumeMounts:
           - mountPath: "/tmp"
-            name: user-set-pvc
+            name: {{ .Values.name }}-set-pvc
           - mountPath: "/docker-entrypoint-initdb.d"
             name: init-script
         readinessProbe:
@@ -60,10 +60,10 @@ spec:
       volumes:
         - name: init-script
           configMap:
-            name: user-config
+            name: {{ .Values.name }}-config
   volumeClaimTemplates:
     - metadata:
-        name: user-set-pvc
+        name: {{ .Values.name }}-set-pvc
       spec:
         accessModes: [ "ReadWriteOnce" ]
         storageClassName: "hostpath"
