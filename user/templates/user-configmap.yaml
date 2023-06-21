@@ -7,7 +7,7 @@ data:
   current-date: {{ include "current-date" . }}
   version: {{ include "version" . }}
   database: {{ .Values.database.name }}
-  database_url: jdbc:postgresql://{{ .Values.name }}:{{ .Values.database.port }}/{{ .Values.database.name }}
+  database_url: jdbc:postgresql://user-database:5432/users
   hibernate_create: update
   sql_show: "true"
   init.sql: |

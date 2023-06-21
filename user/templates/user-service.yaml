@@ -6,10 +6,8 @@ metadata:
   labels:
     {{ include "app.label" . }}
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     {{ include "app.label" . }}
   ports:
-    - port: 81
-      targetPort: {{ .Values.container.port }}
-      nodePort: 30007
+    - port: {{ .Values.container.port }}
