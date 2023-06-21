@@ -5,7 +5,7 @@ metadata:
   name: {{ .Values.name }}-config
 data:
   database: {{ .Values.database.name }}
-  database_url: jdbc:postgresql://{{ .Values.name }}-database:{{ .Values.database.port }}/{{ .Values.database.name }}
+  database_url: jdbc:postgresql://post-database:5432/posts
   user_service_url: http://user-service:81
   hibernate_create: update
   sql_show: "true"
