@@ -7,34 +7,25 @@ The application images used in yaml files are images of user and post app from t
 
 ## Table of content
 * [What to do](#what-to-do)
-* [Task 1: Helm charts](#task-1-helm-charts)
-* [Task 2: Helm chart helpers](#task-2-helm-chart-helpers)
+* [Task 1: Ingress](#task-1-ingress)
 * [Task](#usage)
 
 ## What to do
 
-In this module you will learn how to attach persistent storages to your applications. Also, you will understand how helm charts work.
+In this module you will learn how to install ingress controller and route traffic to your applications. Also, you will practice helm.
 
-## Task 1: Helm charts
+## Task 1: Ingress
 
-1. Install helm Official download link.
-2. Add helm chart to deploy your applications. Make replica-count and namespace a helm values.
-3. Add helm values file to store default values for helm variables.
-4. Run helm using helm install command to deploy applications with default helm variables. Make sure, your applications are up and running.
-5. Run helm once again, but this time set namespace and replica-count for helm intall to non-default values.
-
-## Task 2: Helm chart helpers
-
-1. Create helm _helpers.tpl file and define next labels there:
-   * current date : use helm generator for it's value
-   * version
-2. Make config-map use values as labels from helm _helpers.tpl file.
+1. Install ingress controller using helm chart. (guide)
+2. Change Services type to ClusterIP to restrict external access.
+3. Create ingress resource and route your traffic using rules.
+4. Configure rewrite-target of path using annotations. Example routing: from http://localhost/posts/api/v1/greeting to http://posts:8080/api/v1/greeting. (ref docs)
 
 ## Usage
 ```
 git clone https://github.com/dominikjaniga91/kubernetes-and-spring-boot.git
 cd kubernetes-and-spring-boot
-git switch helm
+git switch networking
 ```
 
 Create namespace:
@@ -42,6 +33,13 @@ Create namespace:
 kubectl apply -f namespace.yaml
 ```
 
+Create ngnix ingress controller
+```
+helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install my-ingress ingress-nginx/ingress-nginx
+```
 Create user app, service, volumes and database:
 ```
 cd user
@@ -52,6 +50,12 @@ Create post app, service, volumes and database:
 ```
 cd post
 helm install post .
+```
+
+Check ingress:
+```
+ kubectl get ingress -n=k8s-program
+ kubectl get all | grep my-ingress
 ```
 
 Delete all:
